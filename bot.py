@@ -1,11 +1,6 @@
 import os
 from time import sleep
-from dotenv import load_dotenv
 import tweepy
-
-# Manage credentials
-dotenv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
-load_dotenv(dotenv_path)
 
 # Load credentials
 consumer_key = os.environ.get('CONSUMER_KEY')
