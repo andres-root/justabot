@@ -1,23 +1,29 @@
 import os
-from time import sleep
 import tweepy
+import requests
 
-# Load credentials
+# Obtener las llaves de la app de Twitter desde variables de entorno por seguridad
 consumer_key = os.environ.get('CONSUMER_KEY')
 consumer_secret = os.environ.get('CONSUMER_SECRET')
 access_token = os.environ.get('ACCESS_TOKEN')
 access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')
 
-
+# Autenticar utilizando estas llaves
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+
+# Configura el access token
 auth.set_access_token(access_token, access_token_secret)
+
+# Obtiene objeto de API de consulta de twitter
 api = tweepy.API(auth)
 
-tweet_file = open('ginsberg.txt', 'r')
-tweets = tweet_file.readlines()
-tweet_file.close()
+# Consulta los datos del sensor en la IP del Wemos
+response = requests.get('http://localhost:3000/sensor.json')
 
-for tweet in tweets:
-    print('Ginsberg Bot Says: {0}'.format(tweet))
-    api.update_status('Ginsberg Bot Says: {0}'.format(tweet))
-    sleep(5)
+# Convierte la respuesta del servidor de Wemos en un diccionario de Python
+sensor_data = response.json()
+
+temperature = response['variables']['temperature']
+
+# Envia el tweet en mi cuenta
+api.update_status('La temperatura es: {0}'.format(temperature))
